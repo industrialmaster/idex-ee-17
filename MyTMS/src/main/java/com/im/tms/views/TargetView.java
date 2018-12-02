@@ -5,10 +5,16 @@
  */
 package com.im.tms.views;
 
+import com.im.tms.controls.TargetController;
+import com.im.tms.models.Target;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,7 +27,25 @@ public class TargetView extends javax.swing.JPanel {
      */
     public TargetView() {
         initComponents();
+        loadToTable();
     }
+    
+    public void loadToTable(){
+        List<Target> list = TargetController.getAll();
+        DefaultTableModel dtm = (DefaultTableModel) jTable1.getModel();
+        dtm.setRowCount(0);
+        for (Target target : list) {
+            Object[] row = {
+                target.getId(), 
+                target.getName(), 
+                target.getTargetDate(),
+                target.getAmount()
+            };
+            dtm.addRow(row);
+        }
+        
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -114,13 +138,10 @@ public class TargetView extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "NAME", "TARGET DATE", "AMOUNT"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -172,28 +193,30 @@ public class TargetView extends javax.swing.JPanel {
         String date = txtDate.getText();
         String amount = txtAmount.getText();
         
-        //2. Processing Data Values
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date targetDate = null;
         try {
-            
-            String sql = "INSERT INTO target "+
-                    " (name, target_date,amount, created_date, completed, cancelled) "+
-                    " VALUES (?,?,?,now(),'0','0')";
-            
-            String url = "jdbc:mysql://localhost:3306/dbtarget";
-            Connection con = DriverManager.getConnection(url, "root", "0147");
-            PreparedStatement ps  = con.prepareStatement(sql);
-            ps.setString(1, name);
-            ps.setString(2, date);
-            ps.setString(3, amount);
-            ps.executeUpdate();
-            
-            JOptionPane.showMessageDialog(this, "Saved!");
-           
+            targetDate = sdf.parse(date);
         } catch (Exception e) {
-            e.printStackTrace();
+        }
+        
+        double dAmount  = Double.parseDouble(amount);
+        
+        Target target = new Target();
+        target.setName(name);
+        target.setTargetDate(targetDate);
+        target.setAmount(dAmount);
+        
+        
+        //2. Processing Data Values
+        boolean done = TargetController.create(target);
+        if(done){
+            JOptionPane.showMessageDialog(this, "Saved!");
+        }else{
             JOptionPane.showMessageDialog(this, "Error");
         }
         
+        loadToTable();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

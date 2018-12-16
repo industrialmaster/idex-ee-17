@@ -111,6 +111,11 @@ public class Target {
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
+
+    @Override
+    public String toString() {
+        return name + " - "+ amount; 
+    }
     
     
     

@@ -66,6 +66,8 @@ public class TargetView extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         txtAmount = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -92,6 +94,20 @@ public class TargetView extends javax.swing.JPanel {
             }
         });
 
+        jButton2.setText("UPDATE");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("DELETE");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -107,11 +123,16 @@ public class TargetView extends javax.swing.JPanel {
                     .addComponent(txtName)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(txtDate)
-                                .addComponent(txtAmount, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)))
-                        .addGap(0, 284, Short.MAX_VALUE)))
+                                .addComponent(txtAmount, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton3)))
+                        .addGap(0, 217, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -130,7 +151,10 @@ public class TargetView extends javax.swing.JPanel {
                     .addComponent(jLabel4)
                     .addComponent(txtAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addContainerGap())
         );
 
@@ -144,6 +168,11 @@ public class TargetView extends javax.swing.JPanel {
                 "ID", "NAME", "TARGET DATE", "AMOUNT"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -219,9 +248,108 @@ public class TargetView extends javax.swing.JPanel {
         loadToTable();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        int row = jTable1.getSelectedRow();
+        //Get Selected Row Number
+        if(row!=-1){
+            String tid = jTable1.getValueAt(row, 0).toString();
+            //Get Value from a Column in that row
+            int id = Integer.parseInt(tid);
+            //String to Integer
+            Target target = TargetController.get(id);
+            txtName.setText(target.getName());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            txtDate.setText(sdf.format(target.getTargetDate()));
+            txtAmount.setText(""+target.getAmount());
+            
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        //1. Get Data Values from Fields
+        String name = txtName.getText();
+        String date = txtDate.getText();
+        String amount = txtAmount.getText();
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date targetDate = null;
+        try {
+            targetDate = sdf.parse(date);
+        } catch (Exception e) {
+        }
+        
+        double dAmount  = Double.parseDouble(amount);
+        
+        int row = jTable1.getSelectedRow();
+        //Get Selected Row Number
+        String tid = jTable1.getValueAt(row, 0).toString();
+        //Get Value from a Column in that row
+        int id = Integer.parseInt(tid);
+        
+        
+        Target target = new Target();
+        target.setId(id);
+        target.setName(name);
+        target.setTargetDate(targetDate);
+        target.setAmount(dAmount);
+        
+        
+        //2. Processing Data Values
+        boolean done = TargetController.update(target);
+        if(done){
+            JOptionPane.showMessageDialog(this, "Updated!");
+        }else{
+            JOptionPane.showMessageDialog(this, "Error");
+        }
+        
+        loadToTable();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        //1. Get Data Values from Fields
+        String name = txtName.getText();
+        String date = txtDate.getText();
+        String amount = txtAmount.getText();
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date targetDate = null;
+        try {
+            targetDate = sdf.parse(date);
+        } catch (Exception e) {
+        }
+        
+        double dAmount  = Double.parseDouble(amount);
+        
+        int row = jTable1.getSelectedRow();
+        //Get Selected Row Number
+        String tid = jTable1.getValueAt(row, 0).toString();
+        //Get Value from a Column in that row
+        int id = Integer.parseInt(tid);
+        
+        
+        Target target = new Target();
+        target.setId(id);
+        target.setName(name);
+        target.setTargetDate(targetDate);
+        target.setAmount(dAmount);
+        
+        
+        //2. Processing Data Values
+        boolean done = TargetController.delete(target);
+        if(done){
+            JOptionPane.showMessageDialog(this, "Deleted!");
+        }else{
+            JOptionPane.showMessageDialog(this, "Error");
+        }
+        
+        loadToTable();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

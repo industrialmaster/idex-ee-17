@@ -29,7 +29,7 @@ public class TargetController {
                     " (name, target_date,amount, created_date, completed, cancelled) "+
                     " VALUES (?,?,?,now(),'0','0')";
             
-            Connection con = DB.getConnection();
+            Connection con = DB.getInstance().getCon();
             PreparedStatement ps  = con.prepareStatement(sql);
             ps.setString(1, target.getName());
             Date sqlDate = new Date(target.getTargetDate().getTime());
@@ -50,7 +50,7 @@ public class TargetController {
         try {
             String sql = "SELECT * FROM target";
             
-            Connection con = DB.getConnection();
+            Connection con = DB.getInstance().getCon();
             PreparedStatement ps  = con.prepareStatement(sql);
             
             ResultSet rs = ps.executeQuery();
@@ -78,7 +78,7 @@ public class TargetController {
         try {
             String sql = "SELECT * FROM target WHERE id=?";
             
-            Connection con = DB.getConnection();
+            Connection con = DB.getInstance().getCon();
             PreparedStatement ps  = con.prepareStatement(sql);
             ps.setInt(1, id);
             
@@ -107,7 +107,7 @@ public class TargetController {
                     " name=?, target_date=?, amount=? "+
                     " WHERE id=?";
             
-            Connection con = DB.getConnection();
+            Connection con = DB.getInstance().getCon();
             PreparedStatement ps  = con.prepareStatement(sql);
             ps.setString(1, target.getName());
             Date sqlDate = new Date(target.getTargetDate().getTime());
@@ -130,7 +130,7 @@ public class TargetController {
             String sql = "DELETE FROM target "+
                     " WHERE id=?";
             
-            Connection con = DB.getConnection();
+            Connection con = DB.getInstance().getCon();
             PreparedStatement ps  = con.prepareStatement(sql);
             
             ps.setInt(1, target.getId());

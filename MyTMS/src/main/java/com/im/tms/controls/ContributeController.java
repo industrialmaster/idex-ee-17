@@ -28,8 +28,7 @@ public class ContributeController {
                     " (target_id, date, amount, cancelled) "+
                     " VALUES (?,?,?,'0')";
             
-            String url = "jdbc:mysql://localhost:3306/dbtarget";
-            Connection con = DriverManager.getConnection(url, "root", "0147");
+            Connection con = DB.getInstance().getCon();
             PreparedStatement ps  = con.prepareStatement(sql);
             ps.setInt(1, contribute.getTargetId());
             Date sqlDate = new Date(contribute.getDate().getTime());
@@ -49,7 +48,7 @@ public class ContributeController {
         List<Contribute> list = new ArrayList<>();
         try {
             String sql = "SELECT * FROM contribution";
-            Connection con = DB.getConnection();
+            Connection con = DB.getInstance().getCon();
             PreparedStatement ps  = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
@@ -71,7 +70,7 @@ public class ContributeController {
         Contribute contribute = new Contribute();
         try {
             String sql = "SELECT * FROM contribution WHERE id=?";
-            Connection con = DB.getConnection();
+            Connection con = DB.getInstance().getCon();
             PreparedStatement ps  = con.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
